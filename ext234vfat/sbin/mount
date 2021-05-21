@@ -4,6 +4,12 @@
 # Allow vfat to be mounted as ext* instead.
 #
 
+# First, fix blkid in a "update-safe" manner.
+test -h /sbin/blkid && rm /sbin/blkid && cat > /sbin/blkid <<-'EOF' && chmod +x /sbin/blkid
+    #!/bin/busybox sh
+	busybox blkid "$@" | sed 's/\(.*KOBOeReader.*TYPE="\)ext./\1vfat/'
+EOF
+
 original=$(echo "$@")
 filtered=$(echo "$@" | sed -e 's/-t  *vfat//')
 
